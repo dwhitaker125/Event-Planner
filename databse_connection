@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS students (
 ''')
 
 # Insert sample data with string-based IDs
-students = [("cMiguel1", "HuevoHuevo02"), ("JJefferson2", "secure456"), ("Jsmith1", "mypassword789")]
+students = [("cMiguel1", "HuevoHuevo02"), ("JJefferson2", "secure456"), ("Jsmith1", "mypassword789"),("gRamirez2","Sspassword1" ),("",""),("",""),("",""),("",""),("",""),("",""),("",""),("",""),("",""),("",""),("","")]
 
 cursor.executemany("INSERT INTO students (id, password) VALUES (?, ?)", students)
 
