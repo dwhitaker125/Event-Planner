@@ -66,15 +66,10 @@
 <body>
     <div class="login-container">
         <h2>Montclair Event Planner</h2>
-        <form>
-            <input type="text" placeholder="Username" required>
-            <input type="password" placeholder="Password" required>
-
+        <form action="/login" method="POST">
+            <input type="text" name="username" placeholder="Username" required>
+            <input type="password" name="password" placeholder="Password" required>
             <button type="submit">Login</button><br>
-            <br>
-           
-
-
         </form>
         <img src="images/MontclairHawk.svg" alt="Montclair Logo" class="mascot-img">
     </div>
