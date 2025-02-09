@@ -17,12 +17,12 @@ def login():
     password = request.form.get('password')
 
     # Connect to the database
-    conn = sqlite3.connect("students.db")
-    cursor = conn.cursor()
+    conn = sqlite3.connect("students.db") 
+    cursor = conn.cursor() # Cursor retrieves and manipulates the data of each row(Row Pointer)
 
     # Check if the username and password match
     cursor.execute("SELECT * FROM students WHERE id = ? AND password = ?", (username, password))
-    user = cursor.fetchone()
+    user = cursor.fetchone() # Fetchone refers to the data of login credentials used
 
     conn.close()
 
