@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Events</title>
+</head>
+<body>
+    <h1>Upcoming Events</h1>
+
+    <!-- Admin-Only: Add New Event -->
+    {% if is_admin %}
+        <a href="{{ url_for('add_event') }}">Add New Event</a>
+    {% endif %}
+
+    <ul>
+        {% for event in events %}
+            <li>
+                {{ event[1] }} - {{ event[2] }} at {{ event[3] }} ({{ event[4] }})
+
+                <!-- Admin-Only: Edit and Delete Options -->
+                {% if is_admin %}
+                    <a href="{{ url_for('edit_event', event_id=event[0]) }}">Edit</a>
+                    <a href="{{ url_for('delete_event', event_id=event[0]) }}" onclick="return confirm('Are you sure?');">Delete</a>
+                {% endif %}
+            </li>
+        {% endfor %}
+    </ul>
+
+    <a href="{{ url_for('logout') }}">Logout</a>
+</body>
+</html>
