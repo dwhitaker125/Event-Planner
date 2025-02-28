@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Montclair Event Planner</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to right, #d50000, #ffffff);
+            display: flex; 
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .event-container {
+            background-color: #d50000;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            color: white;
+            width: 350px;
+        }
+        .event-container h2 {
+            margin-bottom: 20px;
+        }
+        .event-container input, .event-container textarea {
+            width: 100%;
+            padding: 5px;
+            margin: 5px 0;
+            border: none;
+            border-radius: 4px;
+        }
+        .event-container button {
+            background-color: white;
+            color: #d50000;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .event-container button:hover {
+            background-color: #ffcccc;
+        }
+        .mascot-img {
+            width: 100px;
+            height: auto;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="event-container">
+        <h2>Montclair Event Planner</h2>
+        <form>
+            <input type="text" placeholder="Event Name" required>
+            <input type="date" required>
+            <input type="time" required>
+            <textarea placeholder="Event Description" rows="4" required></textarea>
+            <button type="submit">Create Event</button>
+        </form>
+        <img src="{{ url_for('static', filename='images/MontclairHawk.svg') }}" alt="Montclair Logo" class="mascot-img">
+    </div>
+</body>
+</html>
