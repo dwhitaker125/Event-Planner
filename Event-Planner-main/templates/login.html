@@ -63,12 +63,12 @@
         <img src="{{ url_for('static', filename='images/MontclairHawk.svg') }}" alt="Montclair Logo" class="mascot-img">
     </div>
 
-    <!-- JavaScript to Show Alert Message -->
     <script>
         window.onload = function() {
-            var flashMessages = {{ get_flashed_messages() | tojson }};
+            var flashMessages = {{ get_flashed_messages() | tojson | safe }};
+            
             if (flashMessages.length > 0) {
-                alert(flashMessages[0]);  // Show the first flash message as an alert
+                alert(flashMessages[0]);  // Show alert with flash message
             }
         };
     </script>

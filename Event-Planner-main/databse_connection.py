@@ -12,26 +12,31 @@ def login_page():
 # Route to handle login
 @app.route('/login', methods=['POST'])
 def login():
-
     username = request.form.get('username')
     password = request.form.get('password')
 
     conn = sqlite3.connect("students.db")
     cursor = conn.cursor()
 
-    # Check user credentials
-    cursor.execute("SELECT * FROM students WHERE id = ? AND password = ?", (username, password))
+    # Fetch user ID and role
+    cursor.execute("SELECT id, role FROM students WHERE id = ? AND password = ?", (username, password))
     user = cursor.fetchone()
     conn.close()
 
     if user:
-        session['username'] = username  # Store session data
-        return redirect(url_for('view_events'))  # Redirect to events page
-    else:
-        flash("Invalid username or password. Please try again.")  # Flash message for pop-up
-        return redirect(url_for('login_page'))  # Stay on login page
+        user_id, role = user  
+        session['username'] = username  
+        session['role'] = role  
 
-# Route to get information for the events page
+        if role == "admin":
+            return redirect(url_for('admin_events'))  # Redirect admin to event management
+        else:
+            return redirect(url_for('view_events'))  # Redirect regular user to events page
+    else:
+        flash("Invalid username or password. Please try again.")  
+        return redirect(url_for('login_page'))  
+
+# Function to fetch events from the database
 def get_events():
     conn = sqlite3.connect("events.db") 
     cursor = conn.cursor()
@@ -40,12 +45,36 @@ def get_events():
     conn.close()
     return events
 
-# Route for displaying events
+# Route for displaying events (Regular User)
 @app.route('/events')
 def view_events():
+    if 'username' not in session:
+        flash("Please log in to view events.")
+        return redirect(url_for('login_page'))  
+
     events = get_events()  
+
     return render_template('view_events.html', events=events)
+
+# Route for Admin Event Management
+@app.route('/admin/events')
+def admin_events():
+    if 'username' not in session or session.get('role') != "admin":
+        flash("Unauthorized access.")
+        return redirect(url_for('view_events'))  
+
+    events = get_events()  
+
+    return render_template('admin_v1.1.html', events=events)
+
+# Logout Route
+@app.route('/logout')
+def logout():
+    session.clear()  
+    flash("You have been logged out.")
+    return redirect(url_for('login_page'))
 
 # Run the application
 if __name__ == "__main__":
     app.run(debug=True)
+
