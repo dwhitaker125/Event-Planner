@@ -10,9 +10,10 @@
             background: linear-gradient(to right, #d50000, #ffffff);
             display: flex; 
             justify-content: center;
-            align-items: center;
-            height: 100vh;
+            align-items: start; /* Change from 'start' to allow natural content flow */
+            min-height: 100vh; /* Change from 'height' to 'min-height' */
             margin: 0;
+            overflow-y: auto; /* Enable vertical scrolling */
         }
         .events-container {
             background-color: #d50000;
@@ -22,6 +23,7 @@
             text-align: center;
             color: white;
             width: 400px;
+            margin-bottom: 20px; /* Ensure spacing for scrolling */
         }
         .events-container h2 {
             margin-bottom: 20px;
