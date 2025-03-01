@@ -29,7 +29,7 @@ def login():
         session['role'] = role  
 
         if role == "admin":
-            return redirect(url_for('admin_events'))  # Redirect admin to event management
+            return redirect(url_for('view_events'))  # Redirect admin to event management
         else:
             return redirect(url_for('view_events'))  # Redirect regular user to events page
     else:
@@ -53,21 +53,43 @@ def view_events():
         return redirect(url_for('login_page'))  
 
     events = get_events()  
+    is_admin = session.get('role') == "admin"  # Check if the user is an admin
 
-    return render_template('view_events.html', events=events)
+    return render_template('view_events.html', events=events, is_admin=is_admin)
 
-# Route for Admin Event Management
-@app.route('/admin/events')
-def admin_events():
-    if 'username' not in session or session.get('role') != "admin":
-        flash("Unauthorized access.")
-        return redirect(url_for('view_events'))  
+# Admin-only route to add a new event
+@app.route('/add_event', methods=['GET', 'POST'])
+def add_event():
+    if 'username' not in session or session.get('role') != 'admin':
+        flash("You must be an admin to access this page.")
+        return redirect(url_for('view_events'))
 
-    events = get_events()  
+    if request.method == 'POST':
+        # Get event details from the form
+        title = request.form.get('title')
+        date = request.form.get('date')
+        time = request.form.get('time')
+        location = request.form.get('location')
+        event_creator = session.get('username')  # Get event creator from session
 
-    return render_template('admin_v1.1.html', events=events)
+        if not event_creator:
+            flash("Error: No event creator found.")
+            return redirect(url_for('add_event'))
 
-# Logout Route
+        # Add event to the database
+        conn = sqlite3.connect("events.db")
+        cursor = conn.cursor()
+        cursor.execute("INSERT INTO events (event_title, event_date, event_time, event_location, event_creator) VALUES (?, ?, ?, ?, ?)", 
+                       (title, date, time, location, event_creator))
+        conn.commit()
+        conn.close()
+
+        flash("Event added successfully.")
+        return redirect(url_for('view_events'))
+
+    return render_template('create_eventpage.html')
+
+# Admin-only route to edit an event
 @app.route('/logout')
 def logout():
     session.clear()  
@@ -77,4 +99,3 @@ def logout():
 # Run the application
 if __name__ == "__main__":
     app.run(debug=True)
-

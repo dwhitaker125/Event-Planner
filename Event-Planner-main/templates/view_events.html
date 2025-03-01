@@ -38,20 +38,55 @@
             height: auto;
             margin-top: 15px;
         }
+        .admin-actions {
+            margin-top: 20px;
+            text-align: center;
+        }
+        .admin-actions a {
+            display: inline-block;
+            margin: 10px;
+            padding: 10px;
+            background-color: white;
+            color: #d50000;
+            border-radius: 4px;
+            text-decoration: none;
+        }
+        .admin-actions a:hover {
+            background-color: #d50000;
+            color: white;
+        }
     </style>
 </head>
 <body>
     <div class="events-container">
         <h2>Upcoming Events</h2>
-        {% for event in events %}
-        <div class="event">
-            <h3>{{ event[0] }}</h3>  
-            <p>Date: {{ event[1] }}</p>
-            <p>Time: {{ event[2] }}</p>
-            <p>Location: {{ event[3] }}</p>
+        
+        <!-- Admin-Only: Add New Event -->
+        {% if is_admin %}
+            <div class="admin-actions">
+                <a href="{{ url_for('add_event') }}">Add New Event</a>
+            </div>
+        {% endif %}
+
+        <div>
+            <!-- Displaying Events -->
+            {% for event in events %}
+                <div class="event">
+                    <h3>{{ event[0] }}</h3>  
+                    <p>Date: {{ event[1] }}</p>
+                    <p>Time: {{ event[2] }}</p>
+                    <p>Location: {{ event[3] }}</p>
+                </div>
+            {% endfor %}
         </div>
-        {% endfor %}
+
         <img src="{{ url_for('static', filename='images/MontclairHawk.svg') }}" alt="Montclair Logo" class="mascot-img">
+
+        <!-- Admin Logout -->
+        <div class="admin-actions">
+            <a href="{{ url_for('logout') }}">Logout</a>
+        </div>
     </div>
 </body>
 </html>
+
