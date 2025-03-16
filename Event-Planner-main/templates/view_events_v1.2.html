@@ -132,9 +132,11 @@
             for (let i = 0; i < events.length; i++) {
                 const event = events[i];
                 const title = event.getElementsByTagName('h3')[0].textContent.toLowerCase();
+                const date = event.getElementsByTagName('p')[0].textContent.toLowerCase();
+                const time = event.getElementsByTagName('p')[1].textContent.toLowerCase();
                 const location = event.getElementsByTagName('p')[2].textContent.toLowerCase();
 
-                if (title.includes(filter) || location.includes(filter)) {
+                if (title.includes(filter) || location.includes(filter) || date.includes(filter) || time.includes(filter)) {
                     event.style.display = '';
                 } else {
                     event.style.display = 'none';
