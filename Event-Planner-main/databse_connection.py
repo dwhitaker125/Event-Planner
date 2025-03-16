@@ -40,7 +40,7 @@ def login():
 def get_events():
     conn = sqlite3.connect("events.db") 
     cursor = conn.cursor()
-    cursor.execute("SELECT event_title, event_date, event_time, event_location FROM events") 
+    cursor.execute("SELECT event_title, event_date, event_time, event_location FROM events ORDER BY event_date ASC")
     events = cursor.fetchall()
     conn.close()
     return events
@@ -55,7 +55,7 @@ def view_events():
     events = get_events()  
     is_admin = session.get('role') == "admin"  # Check if the user is an admin
 
-    return render_template('view_events.html', events=events, is_admin=is_admin)
+    return render_template('view_events_v1.2.html', events=events, is_admin=is_admin)
 
 # Admin-only route to add a new event
 @app.route('/add_event', methods=['GET', 'POST'])
