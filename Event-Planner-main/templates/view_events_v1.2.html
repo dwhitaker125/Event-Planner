@@ -29,13 +29,25 @@
         .events-container h2 {
             margin-bottom: 20px;
         }
+        
+        /* Add style for the search bar */
+        .search-bar {
+            margin-bottom: 20px;
+        }
+        .search-bar input {
+            padding: 10px;
+            width: 300px;
+            border-radius: 4px;
+            border: none;
+            font-size: 16px;
+        }
 
         /* FLEXBOX for Horizontal Layout */
         .events-list {
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
-            gap: 20px; /* Space between event cards */
+            gap: 20px;
         }
 
         .event {
@@ -55,6 +67,7 @@
             height: auto;
             margin-top: 15px;
         }
+
         .admin-actions {
             margin-top: 20px;
             text-align: center;
@@ -84,8 +97,13 @@
             </div>
         {% endif %}
 
+        <!-- SEARCH BAR -->
+        <div class="search-bar">
+            <input type="text" id="searchInput" placeholder="Search events..." onkeyup="searchEvents()">
+        </div>
+
         <!-- FLEXBOX CONTAINER FOR HORIZONTAL DISPLAY -->
-        <div class="events-list">
+        <div class="events-list" id="eventsList">
             {% for event in events %}
                 <div class="event">
                     <h3>{{ event[0] }}</h3>
@@ -102,6 +120,28 @@
             <a href="{{ url_for('logout') }}">Logout</a>
         </div>
     </div>
+
+    <script>
+        function searchEvents() {
+            const input = document.getElementById('searchInput');
+            const filter = input.value.toLowerCase();
+            const eventsList = document.getElementById('eventsList');
+            const events = eventsList.getElementsByClassName('event');
+            
+            // Loop through each event and hide/show based on search query
+            for (let i = 0; i < events.length; i++) {
+                const event = events[i];
+                const title = event.getElementsByTagName('h3')[0].textContent.toLowerCase();
+                const location = event.getElementsByTagName('p')[2].textContent.toLowerCase();
+
+                if (title.includes(filter) || location.includes(filter)) {
+                    event.style.display = '';
+                } else {
+                    event.style.display = 'none';
+                }
+            }
+        }
+    </script>
 </body>
 </html>
 
