@@ -80,11 +80,22 @@
             color: #d50000;
             border-radius: 4px;
             text-decoration: none;
+            text-align: left;
         }
         .admin-actions a:hover {
             background-color: #d50000;
             color: white;
         }
+        /* Style the links inside the navigation bar */
+.topnav {
+  float: left;
+  color: #f2f2f2;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+  font-size: 17px;
+}
+
     </style>
 </head>
 <body>
@@ -92,14 +103,20 @@
         <h2>Upcoming Events</h2>
 
         {% if is_admin %}
-            <div class="admin-actions">
-                <a href="{{ url_for('add_event') }}">Add New Event</a>
+            <div class="topnav">
+                <a href="{{ url_for('add_event') }}" style="
+                background-color: #d50000; 
+                color: white;
+                border-radius: 4px;
+                text-decoration: none;
+                text-align: left;">
+                    Add New Event</a>
             </div>
         {% endif %}
 
         <!-- SEARCH BAR -->
-        <div class="search-bar">
-            <input type="text" id="searchInput" placeholder="Search events..." onkeyup="searchEvents()">
+        <div class="topnav">
+           <br> <input type="text" id="searchInput" placeholder="Search events..." onkeyup="searchEvents()">
         </div>
 
         <!-- FLEXBOX CONTAINER FOR HORIZONTAL DISPLAY -->
@@ -116,7 +133,7 @@
 
         <img src="{{ url_for('static', filename='images/MontclairHawk.svg') }}" alt="Montclair Logo" class="mascot-img">
 
-        <div class="admin-actions">
+        <div class="topnav">
             <a href="{{ url_for('logout') }}">Logout</a>
         </div>
     </div>
