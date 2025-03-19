@@ -103,12 +103,15 @@ def delete_event():
         return redirect(url_for('view_events'))
 
     if request.method == 'POST':
-        # Get event title from the form
-        event_title = request.form.get('event_title')
+        # Get event details from the form
+        event_info = request.form.get('event_info')
 
-        if not event_title:
-            flash("Error: No event title provided.")
+        if not event_info:
+            flash("Error: No event selected.")
             return redirect(url_for('delete_event'))
+
+        # Split the event_info to extract title, date, and time
+        event_title, event_date, event_time = event_info.split('|')
 
         # Dynamically determine the database path based on the script's location
         BASE_DIR = os.path.dirname(os.path.abspath(__file__)) 
@@ -116,16 +119,16 @@ def delete_event():
         conn = sqlite3.connect(db_path)
 
         cursor = conn.cursor()
-        cursor.execute("DELETE FROM events WHERE event_title = ?", (event_title,))
+        cursor.execute("DELETE FROM events WHERE event_title = ? AND event_date = ? AND event_time = ?", (event_title.strip(), event_date.strip(), event_time.strip()))
         conn.commit()
         conn.close()
 
         flash("Event deleted successfully.")
         return redirect(url_for('view_events'))
 
-    events = get_events()  # Fetch the events to display on the delete_eventpage
+    # Display all events for deletion
+    events = get_events()
     return render_template('delete_eventpage.html', events=events)
-
 
 
 
