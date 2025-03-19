@@ -55,14 +55,14 @@
 <body>
     <div class="event-container">
         <h2>Montclair Event Planner</h2>
-        <form>
-            <input type="text" placeholder="Event Name" required>
-            <input type="date" required>
-            <input type="time" required>
-            <textarea placeholder="Event Description" rows="4" required></textarea>
+        <form action="/add_event" method="POST">
+            <input type="text" name="title" placeholder="Event Name" required>
+            <input type="date" name="date" required>
+            <input type="time" name="time" required>
+            <input type="text" name="location" placeholder="Event Location" required>
             <button type="submit">Create Event</button>
         </form>
-        <img src="images/MontclairHawk.svg" alt="Montclair Logo" class="mascot-img">
+        <img src="../images/MontclairHawk.svg" alt="Montclair Logo" class="mascot-img">
     </div>
 </body>
 </html>
