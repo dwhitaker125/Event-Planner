@@ -1,4 +1,5 @@
 from flask import Flask, request, render_template, redirect, url_for, session, flash
+import os
 import sqlite3
 
 app = Flask(__name__)
@@ -95,7 +96,6 @@ def add_event():
     return render_template('create_eventpage.html')
 
 # Admin-only route to delete an event
-# Admin-only route to delete an event
 @app.route('/delete_event', methods=['GET', 'POST'])
 def delete_event():
     if 'username' not in session or session.get('role') != 'admin':
@@ -123,7 +123,10 @@ def delete_event():
         flash("Event deleted successfully.")
         return redirect(url_for('view_events'))
 
-    return render_template('delete_eventpage.html')
+    events = get_events()  # Fetch the events to display on the delete_eventpage
+    return render_template('delete_eventpage.html', events=events)
+
+
 
 
 # Admin-only route to logout
