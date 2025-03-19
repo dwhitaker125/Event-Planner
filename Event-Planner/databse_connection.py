@@ -77,7 +77,12 @@ def add_event():
             return redirect(url_for('add_event'))
 
         # Add event to the database
-        conn = sqlite3.connect("events.db")
+
+        # Dynamically determine the database path based on the script's location
+        BASE_DIR = os.path.dirname(os.path.abspath(__file__)) 
+        db_path = os.path.join(BASE_DIR, "events.db") 
+        conn = sqlite3.connect(db_path)
+
         cursor = conn.cursor()
         cursor.execute("INSERT INTO events (event_title, event_date, event_time, event_location, event_creator) VALUES (?, ?, ?, ?, ?)", 
                        (title, date, time, location, event_creator))
@@ -89,7 +94,39 @@ def add_event():
 
     return render_template('create_eventpage.html')
 
-# Admin-only route to edit an event
+# Admin-only route to delete an event
+# Admin-only route to delete an event
+@app.route('/delete_event', methods=['GET', 'POST'])
+def delete_event():
+    if 'username' not in session or session.get('role') != 'admin':
+        flash("You must be an admin to access this page.")
+        return redirect(url_for('view_events'))
+
+    if request.method == 'POST':
+        # Get event title from the form
+        event_title = request.form.get('event_title')
+
+        if not event_title:
+            flash("Error: No event title provided.")
+            return redirect(url_for('delete_event'))
+
+        # Dynamically determine the database path based on the script's location
+        BASE_DIR = os.path.dirname(os.path.abspath(__file__)) 
+        db_path = os.path.join(BASE_DIR, "events.db")
+        conn = sqlite3.connect(db_path)
+
+        cursor = conn.cursor()
+        cursor.execute("DELETE FROM events WHERE event_title = ?", (event_title,))
+        conn.commit()
+        conn.close()
+
+        flash("Event deleted successfully.")
+        return redirect(url_for('view_events'))
+
+    return render_template('delete_eventpage.html')
+
+
+# Admin-only route to logout
 @app.route('/logout')
 def logout():
     session.clear()  
