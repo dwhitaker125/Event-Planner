@@ -16,7 +16,7 @@ def login():
     username = request.form.get('username')
     password = request.form.get('password')
 
-    conn = sqlite3.connect("CSIT_415/Event-Planner/students.db")
+    conn = sqlite3.connect("students.db")
     cursor = conn.cursor()
 
     # Fetch user ID and role
@@ -39,7 +39,7 @@ def login():
 
 # Function to fetch events from the database
 def get_events():
-    conn = sqlite3.connect("CSIT_415/Event-Planner/events.db") 
+    conn = sqlite3.connect("events.db") 
     cursor = conn.cursor()
     cursor.execute("SELECT event_title, event_date, event_time, event_location FROM events ORDER BY event_date ASC")
     events = cursor.fetchall()
