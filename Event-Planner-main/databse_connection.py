@@ -1,5 +1,5 @@
 from flask import Flask, request, render_template, redirect, url_for, session, flash
-import sqlite3
+import sqlite3, os
 
 app = Flask(__name__)
 app.secret_key = "your_secret_key"  # Required for session handling
@@ -15,7 +15,11 @@ def login():
     username = request.form.get('username')
     password = request.form.get('password')
 
-    conn = sqlite3.connect("students.db")
+    # Dynamically determine the database path based on the script's location
+    BASE_DIR = os.path.dirname(os.path.abspath(__file__)) 
+    db_path = os.path.join(BASE_DIR, "students.db") 
+
+    conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
 
     # Fetch user ID and role
@@ -38,7 +42,12 @@ def login():
 
 # Function to fetch events from the database
 def get_events():
-    conn = sqlite3.connect("events.db") 
+
+    # Dynamically determine the database path based on the script's location
+    BASE_DIR = os.path.dirname(os.path.abspath(__file__)) 
+    db_path = os.path.join(BASE_DIR, "events.db") 
+
+    conn = sqlite3.connect(db_path) 
     cursor = conn.cursor()
     cursor.execute("SELECT event_title, event_date, event_time, event_location FROM events ORDER BY event_date ASC")
     events = cursor.fetchall()
@@ -55,7 +64,7 @@ def view_events():
     events = get_events()  
     is_admin = session.get('role') == "admin"  # Check if the user is an admin
 
-    return render_template('view_events_v1.2.html', events=events, is_admin=is_admin)
+    return render_template('view_events.html', events=events, is_admin=is_admin)
 
 # Admin-only route to add a new event
 @app.route('/add_event', methods=['GET', 'POST'])
@@ -77,7 +86,12 @@ def add_event():
             return redirect(url_for('add_event'))
 
         # Add event to the database
-        conn = sqlite3.connect("events.db")
+
+        # Dynamically determine the database path based on the script's location
+        BASE_DIR = os.path.dirname(os.path.abspath(__file__)) 
+        db_path = os.path.join(BASE_DIR, "events.db") 
+        conn = sqlite3.connect(db_path)
+
         cursor = conn.cursor()
         cursor.execute("INSERT INTO events (event_title, event_date, event_time, event_location, event_creator) VALUES (?, ?, ?, ?, ?)", 
                        (title, date, time, location, event_creator))
@@ -89,7 +103,24 @@ def add_event():
 
     return render_template('create_eventpage.html')
 
-# Admin-only route to edit an event
+# Admin-only route to delete events
+@app.route('/delete_event/<event_title>', methods=['POST'])
+def delete_event(event_title):
+
+    # Dynamically determine the database path based on the script's location
+    BASE_DIR = os.path.dirname(os.path.abspath(__file__)) 
+    db_path = os.path.join(BASE_DIR, "events.db") 
+    conn = sqlite3.connect(db_path)
+
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM events WHERE event_title = ?", (event_title,))
+    conn.commit()
+    conn.close()
+
+    flash("Event deleted successfully.")
+    return redirect(url_for('view_events'))
+
+# Admin-only route to logout
 @app.route('/logout')
 def logout():
     session.clear()  
