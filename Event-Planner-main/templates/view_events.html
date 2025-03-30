@@ -21,12 +21,13 @@
             max-width: 1200px;
         }
         .sidebar {
+            box-sizing: border-box;
             background-color: #d50000;
             padding: 15px;
             border-radius: 8px;
             height: 100vh;
             position: fixed;
-            left: -220px;
+            left: -240px;
             top: 50px;
             width: 220px;
             transition: left 0.3s;
@@ -90,10 +91,27 @@
             border-radius: 5px;
             width: 90%;
         }
+        .delete-button{
+            text-decoration: none;
+            background: linear-gradient(to bottom, #ffffff, #e6e6e6);
+            color: #d50000;
+            font-weight: bold;
+            cursor: pointer;
+            padding: 6px 12px;
+            border: 1px solid #e6e6e6;
+            border-radius: 4px;
+            box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+            transition: background 0.2s, color 0.2s, border-color 0.2s;
+        }
+        .delete-button:hover {
+            background-color: #b30000;
+            color: #fff;
+            background-image: none;
+            border-color: #b30000;
+        }
     </style>
 </head>
 <body>
-  <body>
     <div class="container">
         <div class="menu-icon" onclick="toggleSidebar()">☰</div>
         <div class="sidebar" id="sidebar">
@@ -132,7 +150,7 @@
             const mainContent = document.getElementById('mainContent');
             if (sidebar.style.left === "0px") {
                 sidebar.style.left = "-220px";
-                mainContent.style.marginLeft = "20px";
+                mainContent.style.marginLeft = "0px";
             } else {
                 sidebar.style.left = "0px";
                 mainContent.style.marginLeft = "220px";
