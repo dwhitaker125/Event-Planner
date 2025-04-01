@@ -135,11 +135,18 @@
                         <p>Time: {{ event[2] }}</p>
                         <p>Location: {{ event[3] }}</p>
                         {% if is_admin %}
+<<<<<<< Updated upstream:Event-Planner-main/templates/view_events.html
                         <form action="{{ url_for('delete_event', event_title=event[0]) }}" method="POST" style="display:inline;">
                             <a href="{{ url_for('edit_event', event_title=event[0]) }}" class="delete-button">Edit</a>
                           <button type="submit" class="delete-button">Delete</button>
                       </form>
                       
+=======
+                            <form action="{{ url_for('delete_event', event_title=event[0]) }}" method="POST" style="display:inline;">
+                                <a href="{{ url_for('edit_event', event_title=event[0]) }}" class="delete-button">Edit</a>
+                                <button type="submit" class="delete-button">Delete</button>
+                            </form>
+>>>>>>> Stashed changes:Event-Planner/Event-Planner-main/templates/view_events.html
                         {% endif %}
                     </div>
                 {% endfor %}

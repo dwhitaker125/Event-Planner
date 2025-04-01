@@ -104,6 +104,52 @@ def add_event():
         return redirect(url_for('view_events'))
 
     return render_template('create_eventpage.html')
+# Edit Events     
+@app.route('/edit_event/<event_title>', methods=['GET', 'POST'])
+def edit_event(event_title):
+    if 'username' not in session or session.get('role') != 'admin':
+        flash("You must be an admin to edit events.")
+        return redirect(url_for('view_events'))
+
+    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+    db_path = os.path.join(BASE_DIR, "events.db")
+    conn = sqlite3.connect(db_path)
+    cursor = conn.cursor()
+
+    # Fetch event details
+    cursor.execute("SELECT event_title, event_date, event_time, event_location FROM events WHERE event_title = ?", (event_title,))
+    event = cursor.fetchone()
+    conn.close()
+
+    if not event:
+        flash("Event not found.")
+        return redirect(url_for('view_events'))
+
+    if request.method == 'POST':
+        new_title = request.form.get('title')
+        new_date = request.form.get('date')
+        new_time = request.form.get('time')
+        new_location = request.form.get('location')
+        new_attendees = request.form.get('max_attendees')
+
+        # Update the event in the database
+        conn = sqlite3.connect(db_path)
+        cursor = conn.cursor()
+        cursor.execute("""
+            UPDATE events 
+            SET event_title = ?, event_date = ?, event_time = ?, event_location = ?, max_attendees = ?
+            WHERE event_title = ?
+        """, (new_title, new_date, new_time, new_location, new_attendees, event_title))
+        conn.commit()
+        conn.close()
+
+        flash("Event updated successfully.")
+        return redirect(url_for('view_events'))
+
+    return render_template('edit_eventpage.html', event=event)
+
+# Admin-only route to delete events
+
 
 #Edit events for admin
 @app.route('/edit_event/<event_title>', methods=['GET', 'POST'])
