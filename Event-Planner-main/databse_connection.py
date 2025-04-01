@@ -1,4 +1,5 @@
 from flask import Flask, request, render_template, redirect, url_for, session, flash
+from datetime import datetime
 import sqlite3, os
 
 app = Flask(__name__)
@@ -77,10 +78,14 @@ def add_event():
         # Get event details from the form
         title = request.form.get('title')
         date = request.form.get('date')
-        time = request.form.get('time')
+        military_time = request.form.get('time')
+        dt = datetime.strptime(military_time, "%H:%M")
+        time = dt.strftime("%I:%M%p")
+        if time.startswith("0"):
+            time = time[1:]
         location = request.form.get('location')
-
         event_creator = session.get('username')  # Get event creator from session
+        max_attendees = request.form.get('max_attendees')
 
         if not event_creator:
             flash("Error: No event creator found.")
@@ -94,8 +99,8 @@ def add_event():
         conn = sqlite3.connect(db_path)
 
         cursor = conn.cursor()
-        cursor.execute("INSERT INTO events (event_title, event_date, event_time, event_location, event_creator) VALUES (?, ?, ?, ?, ?)", 
-               (title, date, time, location, event_creator))
+        cursor.execute("INSERT INTO events (event_title, event_date, event_time, event_location, max_attendees, event_creator) VALUES (?, ?, ?, ?, ?, ?)", 
+               (title, date, time, location, max_attendees, event_creator))
 
         conn.commit()
         conn.close()
@@ -147,60 +152,6 @@ def edit_event(event_title):
         return redirect(url_for('view_events'))
 
     return render_template('edit_eventpage.html', event=event)
-
-# Admin-only route to delete events
-
-<<<<<<< Updated upstream:Event-Planner-main/databse_connection.py
-<<<<<<< Updated upstream:Event-Planner-main/databse_connection.py
-
-#Edit events for admin
-@app.route('/edit_event/<event_title>', methods=['GET', 'POST'])
-def edit_event(event_title):
-    if 'username' not in session or session.get('role') != 'admin':
-        flash("You must be an admin to edit events.")
-        return redirect(url_for('view_events'))
-
-    # Determine database path
-    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-    db_path = os.path.join(BASE_DIR, "events.db")
-    conn = sqlite3.connect(db_path)
-    cursor = conn.cursor()
-
-    # Fetch event details
-    cursor.execute("SELECT event_title, event_date, event_time, event_location FROM events WHERE event_title = ?", (event_title,))
-    event = cursor.fetchone()
-    conn.close()
-
-    if not event:
-        flash("Event not found.")
-        return redirect(url_for('view_events'))
-
-    if request.method == 'POST':
-        new_title = request.form.get('title')
-        new_date = request.form.get('date')
-        new_time = request.form.get('time')
-        new_location = request.form.get('location')
-
-        # Update the event in the database
-        conn = sqlite3.connect(db_path)
-        cursor = conn.cursor()
-        cursor.execute("""
-            UPDATE events 
-            SET event_title = ?, event_date = ?, event_time = ?, event_location = ?
-            WHERE event_title = ?
-        """, (new_title, new_date, new_time, new_location, event_title))
-        conn.commit()
-        conn.close()
-
-        flash("Event updated successfully.")
-        return redirect(url_for('view_events'))
-
-    return render_template('edit_event.html', event=event)
-
-=======
->>>>>>> Stashed changes:Event-Planner/Event-Planner-main/app.py
-=======
->>>>>>> Stashed changes:Event-Planner/Event-Planner-main/app.py
 
 # Admin-only route to delete events
 @app.route('/delete_event/<event_title>', methods=['POST'])

@@ -84,6 +84,10 @@
             <label>Event Location:</label>
             <input type="text" name="location" value="{{ event[3] }}" required>
 
+            <label>Seats Avaiable:</label>
+            <input type="number" name="max_attendees" value="{{ event[4] }}" required>
+
+
             <button type="submit">Save Changes</button>
             <a href="{{ url_for('view_events') }}">Cancel</a>
         </form>
