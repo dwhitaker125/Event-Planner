@@ -151,6 +151,7 @@ def edit_event(event_title):
 # Admin-only route to delete events
 
 <<<<<<< Updated upstream:Event-Planner-main/databse_connection.py
+<<<<<<< Updated upstream:Event-Planner-main/databse_connection.py
 
 #Edit events for admin
 @app.route('/edit_event/<event_title>', methods=['GET', 'POST'])
@@ -196,6 +197,8 @@ def edit_event(event_title):
 
     return render_template('edit_event.html', event=event)
 
+=======
+>>>>>>> Stashed changes:Event-Planner/Event-Planner-main/app.py
 =======
 >>>>>>> Stashed changes:Event-Planner/Event-Planner-main/app.py
 
