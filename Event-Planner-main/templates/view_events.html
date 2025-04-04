@@ -129,6 +129,7 @@
             <h2>Upcoming Events</h2>
             <div class="events-list" id="eventsList">
                 {% for event in events %}
+<<<<<<< Updated upstream:Event-Planner-main/templates/view_events.html
                     <div class="event">
                         <h3>{{ event[0] }}</h3>
                         <p>Date: {{ event[1] }}</p>
@@ -142,6 +143,29 @@
                           <button type="submit" class="delete-button">Delete</button>
                       </form>
                       
+=======
+                <div class="event">
+                    <h3>{{ event[0] }}</h3>
+                    <p>Date: {{ event[1] }}</p>
+                    <p>Time: {{ event[2] }}</p>
+                    <p>Location: {{ event[3] }}</p>
+                    <p>Seats Available: {{ event[4] }}</p>
+            
+                    {% if is_admin %}
+                    <form action="{{ url_for('delete_event', event_title=event[0]) }}" method="POST" style="display:inline;" onsubmit="return confirmDelete('{{ event[0] }}')">
+                        <a href="{{ url_for('edit_event', event_title=event[0]) }}" class="delete-button">Edit</a>
+                        <button type="submit" class="delete-button">Delete</button>
+                    </form>
+                                        {% else %}
+                        {% if event[0] in registered_event_ids %}
+                            <button class="register-btn" disabled>Registered</button>
+                        {% else %}
+                            <form action="{{ url_for('register_event') }}" method="POST">
+                                <input type="hidden" name="event_id" value="{{ event[0] }}">
+                                <input type="hidden" name="event_title" value="{{ event[0] }}">
+                                <button type="submit" class="register-btn">Register</button>
+                            </form>
+>>>>>>> Stashed changes:Event-Planner-Dmytriis-Code/templates/view_events.html
                         {% endif %}
                     </div>
                 {% endfor %}
@@ -186,6 +210,13 @@
                 }
             }
         }
-    </script>
+
+        
+    function confirmDelete(eventTitle) {
+        return confirm(`Are you sure you want to delete the event: "${eventTitle}"? This action cannot be undone.`);
+    }
+
+    // ...your other JS like toggleSidebar and filterEvents...
+</script>
 </body>
 </html>
