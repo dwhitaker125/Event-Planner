@@ -60,12 +60,24 @@ def get_events():
 def view_events():
     if 'username' not in session:
         flash("Please log in to view events.")
-        return redirect(url_for('login_page'))  
+        return redirect(url_for('login_page'))
 
-    events = get_events()  
-    is_admin = session.get('role') == "admin"  # Check if the user is an admin
+    events = get_events()
+    is_admin = session.get('role') == "admin"
+    user_id = session.get('username')  # get current user
 
-    return render_template('view_events.html', events=events, is_admin=is_admin)
+    # connect to the DB and get which events this user registered for
+    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+    db_path = os.path.join(BASE_DIR, "events.db")
+    conn = sqlite3.connect(db_path)
+    cursor = conn.cursor()
+
+    cursor.execute("SELECT event_id FROM registrations WHERE user_id = ?", (user_id,))
+    registered_event_ids = {row[0] for row in cursor.fetchall()}
+    conn.close()
+
+    # ✅ Now pass `registered_event_ids` to the template
+    return render_template('view_events.html', events=events, is_admin=is_admin, registered_event_ids=registered_event_ids)
 
 # Admin-only route to add a new event
 @app.route('/add_event', methods=['GET', 'POST'])
@@ -173,12 +185,69 @@ def delete_event(event_title):
     flash("Event deleted successfully.")
     return redirect(url_for('view_events'))
 
+
+# Register for event
+@app.route('/register_event', methods=['POST'])
+def register_event():
+    if 'username' not in session:
+        flash("Please log in to register for events.")
+        return redirect(url_for('login_page'))  
+
+    event_id = request.form.get('event_id')
+    event_title = request.form.get('event_title')
+    user_id = session.get('username')
+
+    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+    db_path = os.path.join(BASE_DIR, "events.db")
+    conn = sqlite3.connect(db_path)
+    cursor = conn.cursor()
+
+    cursor.execute("SELECT * FROM registrations WHERE user_id = ? AND event_id = ?", (user_id, event_id))
+    if cursor.fetchone():
+        flash("You are already registered for this event.")
+    else:
+        cursor.execute("INSERT INTO registrations (user_id, event_id, event_title) VALUES (?, ?, ?)",
+                       (user_id, event_id, event_title))
+        conn.commit()
+        flash(f"Successfully registered for {event_title}!")
+
+    conn.close()
+    return redirect(url_for('view_events'))
+
 # Admin-only route to logout
 @app.route('/logout')
 def logout():
     session.clear()  
     flash("You have been logged out.")
     return redirect(url_for('login_page'))
+
+#route to display events that current user or organizer are registered to
+@app.route('/my_registrations')
+def my_registrations():
+    if 'username' not in session:
+        flash("Please log in to view your registrations.")
+        return redirect(url_for('login_page'))
+
+    user_id = session['username']
+
+    BASE_DIR = os.path.dirname(os.path.abspath(__file__)) 
+    db_path = os.path.join(BASE_DIR, "events.db") 
+    conn = sqlite3.connect(db_path)
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT e.event_title, e.event_date, e.event_time, e.event_location
+        FROM events e
+        JOIN registrations r ON e.event_title = r.event_title
+        WHERE r.user_id = ?
+        ORDER BY e.event_date ASC
+    """, (user_id,))
+
+    registered_events = cursor.fetchall()
+    conn.close()
+
+    return render_template('my_registrations.html', registered_events=registered_events)
+
 
 # Run the application
 if __name__ == "__main__":
