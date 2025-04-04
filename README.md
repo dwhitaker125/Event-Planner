@@ -1,5 +1,1 @@
-Just did some minor styling changes
--edidted the delete button
--centered the form for adding events, made the button "add event" the same size as the form containers
--made is so the task bar fully hides back all the way to the left after being toggled
--will work on constraints for the events next
+Added the "my registrations" page that is acessible through the task bar for the users and organizers to view the events they are registered to
