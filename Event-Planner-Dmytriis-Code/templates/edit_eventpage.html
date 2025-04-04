@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Event</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to right, #d50000, #ffffff);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+        .form-container {
+            background-color: #d50000;
+            color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            width: 500px;
+            box-sizing: border-box;
+        }
+        .form-container h2 {
+            text-align: center;
+            margin-top: 0;
+        }
+        .form-container label {
+            display: block;
+            margin-top: 10px;
+        }
+        .form-container input, .form-container button {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+        }
+        .form-container button {
+            background-color: #fff;
+            color: #d50000;
+            font-weight: bold;
+            cursor: pointer;
+            border: none;
+        }
+        .form-container button:hover {
+            background-color: #b30000;
+            color: white;
+        }
+        .form-container a {
+            display: inline-block;
+            text-align: center;
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            background-color: white;
+            color: #d50000;
+            text-decoration: none;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        .form-container a:hover {
+            background-color: #b30000;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <h2>Edit Event</h2>
+        <form method="POST">
+            <label>Event Title:</label>
+            <input type="text" name="title" value="{{ event[0] }}" required>
+
+            <label>Event Date:</label>
+            <input type="date" name="date" value="{{ event[1] }}" required>
+
+            <label>Event Time:</label>
+            <input type="time" name="time" value="{{ event[2] }}" required>
+
+            <label>Event Location:</label>
+            <input type="text" name="location" value="{{ event[3] }}" required>
+            
+            <label>Seats Available:</label>
+            <input type="number" name="max_attendees" value="{{ event[4] }}" required>
+
+
+            <button type="submit">Save Changes</button>
+            <a href="{{ url_for('view_events') }}">Cancel</a>
+        </form>
+    </div>
+</body>
+</html>
