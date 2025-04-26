@@ -43,14 +43,27 @@ def login():
 
 # Function to fetch events from the database
 def get_events():
-
-    # Dynamically determine the database path based on the script's location
     BASE_DIR = os.path.dirname(os.path.abspath(__file__)) 
     db_path = os.path.join(BASE_DIR, "events.db") 
 
-    conn = sqlite3.connect(db_path) 
+    conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
-    cursor.execute("SELECT event_title, event_date, event_time, event_location, max_attendees FROM events ORDER BY event_date ASC")
+
+    # Pull event info and registration counts
+    cursor.execute("""
+        SELECT 
+            e.event_title, 
+            e.event_date, 
+            e.event_time, 
+            e.event_location, 
+            e.max_attendees, 
+            COUNT(r.event_id) as registrations_count
+        FROM events e
+        LEFT JOIN registrations r ON e.event_title = r.event_title
+        GROUP BY e.event_title
+        ORDER BY e.event_date ASC
+    """)
+    
     events = cursor.fetchall()
     conn.close()
     return events
@@ -213,6 +226,28 @@ def register_event():
 
     conn.close()
     return redirect(url_for('view_events'))
+
+@app.route('/unregister_event', methods=['POST'])
+def unregister_event():
+    if 'username' not in session:
+        flash("Please log in to manage your registrations.")
+        return redirect(url_for('login_page'))  
+
+    event_id = request.form.get('event_id')
+    user_id = session.get('username')
+
+    BASE_DIR = os.path.dirname(os.path.abspath(__file__)) 
+    db_path = os.path.join(BASE_DIR, "events.db") 
+    conn = sqlite3.connect(db_path)
+    cursor = conn.cursor()
+
+    cursor.execute("DELETE FROM registrations WHERE user_id = ? AND event_id = ?", (user_id, event_id))
+    conn.commit()
+    conn.close()
+
+    flash("You have successfully unregistered from the event.")
+    return redirect(url_for('view_events'))
+
 
 # Admin-only route to logout
 @app.route('/logout')
