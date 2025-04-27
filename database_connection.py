@@ -232,6 +232,16 @@ def logout():
     flash("You have been logged out.")
     return redirect(url_for('login_page'))
 
+@app.route('/created_events')
+def created_events():
+    if 'username' not in session or session.get('role') != 'admin':
+        flash("Unauthorized access.")
+        return redirect(url_for('view_events'))
+
+    events = get_events() 
+    return render_template('created_events.html', events=events)
+
+
 # Run the application
 if __name__ == "__main__":
     app.run(debug=True)
