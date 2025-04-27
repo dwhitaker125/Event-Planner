@@ -132,6 +132,7 @@
             
             {% if is_admin %} 
                 <a href="{{ url_for('add_event') }}">Add New Event</a>
+                <a href="{{ url_for('created_events') }}">Created Events</a>
             {% endif %}
             
             <a href="{{ url_for('logout') }}">Logout</a>
