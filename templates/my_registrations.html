@@ -53,6 +53,7 @@
             gap: 20px;
         }
         .event {
+
             background-color: white;
             color: #d50000;
             padding: 15px;
@@ -61,7 +62,7 @@
             min-width: 250px;
             max-width: 300px;
             text-align: center;
-            flex: 1;
+
         }
         .sidebar a {
             display: block;
@@ -127,7 +128,9 @@
 <body>
     <div class="container">
         <div class="menu-icon" onclick="toggleSidebar()">☰</div>
+
         <div class="sidebar" id="sidebar">
+<<<<<<< Updated upstream:Event-Planner-main/templates/view_events.html
             <a href="#" onclick="toggleSearch()">Search Events</a>
             <input type="text" id="searchBar" placeholder="Search Events..." onkeyup="filterEvents()">
 
@@ -140,10 +143,23 @@
             {% endif %}
 
             
+=======
+            <a href="{{ url_for('view_events') }}">View All Events</a>
+
+            {% if session['role'] in ['user', 'organizer'] %}
+                <a href="{{ url_for('my_registrations') }}">My Registrations</a>
+            {% endif %}
+
+            {% if session['role'] == 'admin' %}
+                <a href="{{ url_for('add_event') }}">Add New Event</a>
+            {% endif %}
+
+>>>>>>> Stashed changes:templates/my_registrations.html
             <a href="{{ url_for('logout') }}">Logout</a>
         </div>
 
         <div class="events-container" id="mainContent">
+<<<<<<< Updated upstream:Event-Planner-main/templates/view_events.html
             <h2>Upcoming Events</h2>
             <div class="events-list" id="eventsList">
                 {% for event in events %}
@@ -179,6 +195,24 @@
                 {% endfor %}
             </div>
             
+=======
+            <h2>My Registered Events</h2>
+
+            {% if registered_events %}
+                <div class="events-list">
+                    {% for event in registered_events %}
+                        <div class="event">
+                            <h3>{{ event[0] }}</h3>
+                            <p>Date: {{ event[1] }}</p>
+                            <p>Time: {{ event[2] }}</p>
+                            <p>Location: {{ event[3] }}</p>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p>You have not registered for any events yet.</p>
+            {% endif %}
+>>>>>>> Stashed changes:templates/my_registrations.html
             <img src="{{ url_for('static', filename='images/MontclairHawk.svg') }}" alt="Montclair Logo" class="mascot-img">
             
 
@@ -194,6 +228,7 @@
                 mainContent.style.marginLeft = "220px";
             }
         }
+<<<<<<< Updated upstream:Event-Planner-main/templates/view_events.html
 
         function toggleSearch() {
             const searchBar = document.getElementById('searchBar');
@@ -229,6 +264,8 @@
 }
 
 
+=======
+>>>>>>> Stashed changes:templates/my_registrations.html
     </script>
 </body>
 </html>
