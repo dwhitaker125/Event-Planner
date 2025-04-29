@@ -8,7 +8,7 @@
     Step 1: If student is registered for event, "Unregistered" is visible
     Step 2: If selected, the student is unregistered for an event.
 
-## Tese Case 2: Student is unable to registered becasue of seats avaiable.
+## Tese Case 3: Student is unable to registered becasue of seats avaiable.
   Step 1: Student cannot register for an event, if "Full" is visible.
 
 
