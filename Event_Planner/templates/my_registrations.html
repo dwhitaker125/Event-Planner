@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Montclair Events</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to right, #d50000, #ffffff);
+            display: flex;
+            justify-content: center;
+            align-items: start;
+            min-height: 100vh;
+            margin: 0;
+            overflow-y: auto;
+        }
+        .container {
+            display: flex;
+            width: 100%;
+            max-width: 1200px;
+        }
+        .sidebar {
+            box-sizing: border-box;
+            background-color: #d50000;
+            padding: 15px;
+            border-radius: 8px;
+            height: 100vh;
+            position: fixed;
+            left: -240px;
+            top: 50px;
+            width: 220px;
+            transition: left 0.3s;
+            z-index: 2;
+        }
+        .events-container {
+            background-color: #d50000;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            color: white;
+            width: 100%;
+            margin-left: 20px;
+            transition: margin-left 0.3s;
+            margin-top: 50px;
+        }
+        .events-list {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+        }
+        .event {
+
+            background-color: white;
+            color: #d50000;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            min-width: 250px;
+            max-width: 300px;
+            text-align: center;
+
+        }
+        .sidebar a {
+            display: block;
+            padding: 10px;
+            margin-bottom: 10px;
+            background-color: white;
+            color: #d50000;
+            text-decoration: none;
+            border-radius: 4px;
+        }
+        .sidebar a:hover {
+            background-color: #b30000;
+            color: white;
+        }
+        .menu-icon {
+            position: fixed;
+            left: 10px;
+            top: 10px;
+            font-size: 30px;
+            color: white;
+            cursor: pointer;
+            z-index: 3;
+        }
+        #searchBar {
+            display: none;
+            margin-bottom: 10px;
+            padding: 5px;
+            border-radius: 5px;
+            width: 90%;
+        }
+        .delete-button{
+            background-color: #d50000;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-top: 10px;
+            text-decoration: none;
+        }
+        .delete-button:hover {
+            background-color: #b30000;
+        }
+
+        .register-btn {
+            background-color: #d50000;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+        .register-btn:hover {
+            background-color: #b30000;
+        }
+
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="menu-icon" onclick="toggleSidebar()">☰</div>
+
+        <div class="sidebar" id="sidebar">
+            <a href="{{ url_for('view_events') }}">View All Events</a>
+
+            {% if session['role'] in ['user', 'organizer'] %}
+                <a href="{{ url_for('my_registrations') }}">My Registrations</a>
+            {% endif %}
+
+            {% if session['role'] == 'admin' %}
+                <a href="{{ url_for('add_event') }}">Add New Event</a>
+            {% endif %}
+
+            <a href="{{ url_for('logout') }}">Logout</a>
+        </div>
+
+        <div class="events-container" id="mainContent">
+            <h2>My Registered Events</h2>
+
+            {% if registered_events %}
+                <div class="events-list">
+                    {% for event in registered_events %}
+                        <div class="event">
+                            <h3>{{ event[0] }}</h3>
+                            <p>Date: {{ event[1] }}</p>
+                            <p>Time: {{ event[2] }}</p>
+                            <p>Location: {{ event[3] }}</p>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p>You have not registered for any events yet.</p>
+            {% endif %}
+            <img src="{{ url_for('static', filename='images/MontclairHawk.svg') }}" alt="Montclair Logo" class="mascot-img">
+        </div>
+    </div>
+
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('mainContent');
+            if (sidebar.style.left === "0px") {
+                sidebar.style.left = "-220px";
+                mainContent.style.marginLeft = "0px";
+            } else {
+                sidebar.style.left = "0px";
+                mainContent.style.marginLeft = "220px";
+            }
+        }
+    </script>
+</body>
+</html>

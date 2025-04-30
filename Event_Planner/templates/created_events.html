@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Created Events</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to right, #d50000, #ffffff);
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            background-color: #d50000;
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        .events-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+        }
+        .event {
+            background-color: white;
+            color: #d50000;
+            padding: 15px;
+            border-radius: 8px;
+            min-width: 250px;
+            max-width: 300px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Created Events</h2>
+        <div class="events-list">
+            {% for event in events %}
+                <div class="event">
+                    <h3>{{ event[0] }}</h3>
+                    <p>Date: {{ event[1] }}</p>
+                    <p>Time: {{ event[2] }}</p>
+                    <p>Location: {{ event[3] }}</p>
+                    <p>Seats Available: {{ event[4] }}</p>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Montclair Events</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to right, #d50000, #ffffff);
+            display: flex;
+            justify-content: center;
+            align-items: start;
+            min-height: 100vh;
+            margin: 0;
+            overflow-y: auto;
+        }
+        .container {
+            display: flex;
+            width: 100%;
+            max-width: 1200px;
+        }
+        .sidebar {
+            box-sizing: border-box;
+            background-color: #d50000;
+            padding: 15px;
+            border-radius: 8px;
+            height: 100vh;
+            position: fixed;
+            left: -240px;
+            top: 50px;
+            width: 220px;
+            transition: left 0.3s;
+            z-index: 2;
+        }
+        .events-container {
+            background-color: #d50000;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            color: white;
+            width: 100%;
+            margin-left: 20px;
+            transition: margin-left 0.3s;
+            margin-top: 50px;
+        }
+        .events-list {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+        }
+        .event {
+            background-color: white;
+            color: #d50000;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            min-width: 250px;
+            max-width: 300px;
+            text-align: center;
+            flex: 1;
+        }
+        .sidebar a {
+            display: block;
+            padding: 10px;
+            margin-bottom: 10px;
+            background-color: white;
+            color: #d50000;
+            text-decoration: none;
+            border-radius: 4px;
+        }
+        .sidebar a:hover {
+            background-color: #b30000;
+            color: white;
+        }
+        .menu-icon {
+            position: fixed;
+            left: 10px;
+            top: 10px;
+            font-size: 30px;
+            color: white;
+            cursor: pointer;
+            z-index: 3;
+        }
+        #searchBar {
+            display: none;
+            margin-bottom: 10px;
+            padding: 5px;
+            border-radius: 5px;
+            width: 90%;
+        }
+        .delete-button{
+            background-color: #d50000;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-top: 10px;
+            text-decoration: none;
+        }
+        .delete-button:hover {
+            background-color: #b30000;
+        }
+
+        .register-btn {
+            background-color: #d50000;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+        .register-btn:hover {
+            background-color: #b30000;
+        }
+
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="menu-icon" onclick="toggleSidebar()">☰</div>
+        <div class="sidebar" id="sidebar">
+            <a href="#" onclick="toggleSearch()">Search Events</a>
+            <input type="text" id="searchBar" placeholder="Search Events..." onkeyup="filterEvents()">
+
+            {% if session['role'] in ['user', 'organizer'] %}
+                <a href="{{ url_for('my_registrations') }}">My Registrations</a>
+            {% endif %}
+            
+            {% if is_admin %} 
+                <a href="{{ url_for('add_event') }}">Add New Event</a>
+                <a href="{{ url_for('created_events') }}">Created Events</a> <!-- ✅ FIXED -->
+            {% endif %}
+            
+            <a href="{{ url_for('logout') }}">Logout</a>
+        </div>
+
+        <div class="events-container" id="mainContent">
+            <h2>Upcoming Events</h2>
+            <div class="events-list" id="eventsList">
+                {% for event in events %}
+                <div class="event">
+                    <h3>{{ event[0] }}</h3>
+                    <p>Date: {{ event[1] }}</p>
+                    <p>Time: {{ event[2] }}</p>
+                    <p>Location: {{ event[3] }}</p>
+                    <p>Seats Available: {{ event[4] - event[5] }}</p>
+            
+                    {% if is_admin %}
+                        <form action="{{ url_for('delete_event', event_title=event[0]) }}" method="POST" style="display:inline;" onsubmit="return confirmDelete('{{ event[0] }}')">
+                            <a href="{{ url_for('edit_event', event_title=event[0]) }}" class="delete-button">Edit</a>
+                            <button type="submit" class="delete-button">Delete</button>
+                        </form>
+                    {% else %}
+                        {% if event[4] - event[5] <= 0 %}
+                            <button class="register-btn" disabled>Full</button>
+                        {% elif event[0] in registered_event_ids %}
+                            <form action="{{ url_for('unregister_event') }}" method="POST" onsubmit="return confirmUnregister();">
+                                <input type="hidden" name="event_id" value="{{ event[0] }}">
+                                <button type="submit" class="register-btn" style="background-color: grey;">Unregister</button>
+                            </form>
+                        {% else %}
+                            <form action="{{ url_for('register_event') }}" method="POST">
+                                <input type="hidden" name="event_id" value="{{ event[0] }}">
+                                <input type="hidden" name="event_title" value="{{ event[0] }}">
+                                <button type="submit" class="register-btn">Register</button>
+                            </form>
+                        {% endif %}
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+            
+            <img src="{{ url_for('static', filename='images/MontclairHawk.svg') }}" alt="Montclair Logo" class="mascot-img">
+            
+
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('mainContent');
+            if (sidebar.style.left === "0px") {
+                sidebar.style.left = "-220px";
+                mainContent.style.marginLeft = "0px";
+            } else {
+                sidebar.style.left = "0px";
+                mainContent.style.marginLeft = "220px";
+            }
+        }
+
+        function toggleSearch() {
+            const searchBar = document.getElementById('searchBar');
+            searchBar.style.display = searchBar.style.display === 'none' ? 'block' : 'none';
+        }
+
+        function filterEvents() {
+            const filter = document.getElementById('searchBar').value.toLowerCase();
+            const events = document.getElementsByClassName('event');
+            for (let i = 0; i < events.length; i++) {
+                const event = events[i];
+                const title = event.getElementsByTagName('h3')[0].textContent.toLowerCase();
+                const date = event.getElementsByTagName('p')[0].textContent.toLowerCase();
+                const time = event.getElementsByTagName('p')[1].textContent.toLowerCase();
+                const location = event.getElementsByTagName('p')[2].textContent.toLowerCase();
+                const seats = event.getElementsByTagName('p')[3].textContent.toLowerCase();
+
+                if (title.includes(filter) || date.includes(filter) || time.includes(filter) || location.includes(filter)
+            || seats.includes(filter)) {
+                    event.style.display = '';
+                } else {
+                    event.style.display = 'none';
+                }
+            }
+        }
+
+        function confirmDelete(eventTitle) {
+        return confirm(`Are you sure you want to delete the event: "${eventTitle}"? This action cannot be undone.`);
+    }
+
+    function confirmUnregister() {
+    return confirm("Are you sure you want to unregister from this event?");
+}
+
+
+    </script>
+</body>
+</html>
